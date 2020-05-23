@@ -1,14 +1,16 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.33.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dd0aaed0bed0b9701a96afe5f0a4230f5990d644e7f6e4c9a8f94b02ecda458a
+-- hash: 0df4123b962561c1a031a351f72ecee8b7f9e475ff1ca631db2f4cf4317b79ae
 
 name:           wav-metadata-service
 version:        0.1.0.0
+synopsis:       WAV metadata service
 description:    Please see the README on GitHub at <https://github.com/michaelheyman/wav-metadata-service#readme>
+category:       Web
 homepage:       https://github.com/michaelheyman/wav-metadata-service#readme
 bug-reports:    https://github.com/michaelheyman/wav-metadata-service/issues
 author:         Michael Heyman
@@ -33,7 +35,11 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , servant-server
+    , wai
+    , warp
   default-language: Haskell2010
 
 executable wav-metadata-service-exe
@@ -44,7 +50,11 @@ executable wav-metadata-service-exe
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , servant-server
+    , wai
+    , warp
     , wav-metadata-service
   default-language: Haskell2010
 
@@ -57,6 +67,10 @@ test-suite wav-metadata-service-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , servant-server
+    , wai
+    , warp
     , wav-metadata-service
   default-language: Haskell2010
