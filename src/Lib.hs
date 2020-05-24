@@ -6,11 +6,11 @@ module Lib
     , app
     ) where
 
-import Data.Aeson
-import Data.Aeson.TH
-import Network.Wai
-import Network.Wai.Handler.Warp
-import Servant
+import           Data.Aeson
+import           Data.Aeson.TH
+import           Network.Wai
+import           Network.Wai.Handler.Warp
+import           Servant
 
 data User = User
   { userId        :: Int
@@ -23,7 +23,13 @@ $(deriveJSON defaultOptions ''User)
 type API = "users" :> Get '[JSON] [User]
 
 startApp :: IO ()
-startApp = run 8080 app
+startApp = do
+    putStrLn message
+    run port app
+  where
+    message = "Running server: " ++ "http://localhost:" ++ show port
+              ++ "\nRunning API: " ++ "\thttp://localhost:" ++ show port ++ "/users"
+    port = 8080
 
 app :: Application
 app = serve api server
