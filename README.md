@@ -14,4 +14,7 @@ The goal of this service is to provide an endpoint that uses [haskell-wav](https
 
 ### Before Committing Changes
 
+1. Ensure that `pre-commit` and its configuration are installed
+    * Install `pre-commit`: `brew install pre-commit` or `pip install pre-commit`
+    * Install the commit hooks: `pre-commit install`
 1. Run `hpack` if changes are made to `package.yaml` or new modules are added.
