@@ -11,6 +11,7 @@ import           Data.Aeson.TH
 import           Network.Wai
 import           Network.Wai.Handler.Warp
 import           Servant
+import           Servant.Multipart
 
 data User = User
   { userId        :: Int
@@ -20,7 +21,7 @@ data User = User
 
 $(deriveJSON defaultOptions ''User)
 
-type API = "users" :> Get '[JSON] [User]
+type API = "upload" :> MultipartForm Tmp (MultipartData Tmp) :> Post '[PlainText] String
 
 startApp :: IO ()
 startApp = do
@@ -28,7 +29,7 @@ startApp = do
     run port app
   where
     message = "Running server: " ++ "http://localhost:" ++ show port
-              ++ "\nRunning API: " ++ "\thttp://localhost:" ++ show port ++ "/users"
+              ++ "\nRunning API: " ++ "\thttp://localhost:" ++ show port ++ "/upload"
     port = 8080
 
 app :: Application
@@ -38,9 +39,9 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server = return users
-
-users :: [User]
-users = [ User 1 "Isaac" "Newton"
-        , User 2 "Albert" "Einstein"
-        ]
+server multipartData = return str
+    where str = "The form was submitted with "
+             ++ show nInputs ++ " textual inputs and "
+             ++ show nFiles  ++ " files."
+          nInputs = length (inputs multipartData)
+          nFiles  = length (files multipartData)

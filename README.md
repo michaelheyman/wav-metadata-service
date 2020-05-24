@@ -10,7 +10,8 @@ The goal of this service is to provide an endpoint that uses [haskell-wav](https
 
 1. Install dependencies: `stack install`
 2. Start the application: `stack run`
-3. Verify that <http://localhost:8080/users> returns data and a 200.
+3. Create a file and execute: `curl -F "data=@<FILE>" http://localhost:8080/upload`
+4. Verify that the endpoint returns `The form was submitted with 0 textual inputs and 1 files.`
 
 ### Before Committing Changes
 
