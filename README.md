@@ -18,3 +18,15 @@ The goal of this service is to provide an endpoint that uses [haskell-wav](https
     * Install `pre-commit`: `brew install pre-commit` or `pip install pre-commit`
     * Install the commit hooks: `pre-commit install`
 1. Run `hpack` if changes are made to `package.yaml` or new modules are added.
+
+### Continuous Compilation with GHCID
+
+The following examples require `ghcid`. Install it via `stack install ghcid`.
+
+Run `ghcid` while developing to compile and reload on code changes. Here are a few options
+
+* Continuously compile application
+
+    ```bash
+    ghcid --command="stack ghci wav-metadata-service"
+    ```
