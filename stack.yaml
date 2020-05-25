@@ -35,7 +35,7 @@ packages:
 # forks / in-progress versions pinned to a git hash. For example:
 #
 extra-deps:
-- git: https://github.com/michaelheyman/haskell-wav
+- github: michaelheyman/haskell-wav
   commit: 0e3f9fa9d2a004e4d07be4196cc1e94a68d1ea08
 - servant-multipart-0.11.5@sha256:1633f715b5b53d648a1da69839bdc5046599f4f7244944d4bbf852dba38d8f4b,2319
 #

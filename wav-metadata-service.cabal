@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 923e35b9aba4c9857ff20ca69c1a3d5884bb15c9320add1df7e42e2ae6b26d33
+-- hash: 7e879f8e8d2c7ae1951e2c81a2a27cac2497ca596539027b9436df3c9eec4d17
 
 name:           wav-metadata-service
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
   build-depends:
       aeson
     , base >=4.7 && <5
+    , haskell-wav
     , servant-multipart
     , servant-server
     , wai
@@ -53,6 +54,7 @@ executable wav-metadata-service-exe
   build-depends:
       aeson
     , base >=4.7 && <5
+    , haskell-wav
     , servant-multipart
     , servant-server
     , wai
@@ -71,6 +73,7 @@ test-suite wav-metadata-service-test
   build-depends:
       aeson
     , base >=4.7 && <5
+    , haskell-wav
     , servant-multipart
     , servant-server
     , wai
