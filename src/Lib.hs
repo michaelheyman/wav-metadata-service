@@ -1,6 +1,5 @@
 {-# LANGUAGE DataKinds         #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TemplateHaskell   #-}
 {-# LANGUAGE TypeOperators     #-}
 
 module Lib
@@ -13,6 +12,7 @@ import           Control.Monad.IO.Class
 import           Data.Aeson
 import           Data.Aeson.TH
 import           Data.Text
+import           Data.Text.Encoding
 import qualified Data.Text.IO             as T
 import           Network.Wai
 import           Network.Wai.Handler.Warp
@@ -22,27 +22,48 @@ import           Sound.Wav.Parser
 import           Sound.Wav.Parser.Types
 import           Stubs
 
-data User = User
-    { userId        :: Int
-    , userFirstName :: String
-    , userLastName  :: String
-    } deriving (Eq, Show)
+instance ToJSON Riff where
+    toJSON (Riff chunkID chunkSize chunkFormat) =
+        object [ "id" .= decodeUtf8 chunkID
+               , "size" .= chunkSize
+               , "format" .= decodeUtf8 chunkFormat
+               ]
 
-$(deriveJSON defaultOptions ''User)
+instance ToJSON Format where
+    toJSON (Format chunkID chunkSize audioFormat numChannels sampleRate byteRate blockAlign bitsPerSample) =
+        object [ "id" .= decodeUtf8 chunkID
+               , "size" .= chunkSize
+               , "audioFormat" .= audioFormat
+               , "numChannels" .= numChannels
+               , "sampleRate" .= sampleRate
+               , "byteRate" .= byteRate
+               , "blockAlign" .= blockAlign
+               , "bitsPerSample" .= bitsPerSample
+               ]
+
+instance ToJSON Data where
+    toJSON (Data chunkID chunkSize chunkData) =
+        object [ "id" .= chunkID
+               , "size" .= chunkSize
+               , "data" .= ("<omitted>" :: Text)
+               ]
 
 instance ToJSON Wav where
     toJSON (Wav riffChunk fmtChunk dataChunk) =
-        object []
+        object [ "riff" .= riffChunk
+               , "fmt" .= fmtChunk
+               , "data" .= dataChunk
+               ]
 
 type API = "upload" :> MultipartForm Tmp (MultipartData Tmp) :> Post '[JSON] [Wav]
 
 startApp :: IO ()
 startApp = do
-    putStrLn message
+    putStrLn runningMessage
     run port app
   where
-    message = "Running server: " ++ "http://localhost:" ++ show port
-              ++ "\nRunning API: " ++ "\thttp://localhost:" ++ show port ++ "/upload"
+    runningMessage = "Running server: " ++ "http://localhost:" ++ show port
+                     ++ "\nRunning API: " ++ "\thttp://localhost:" ++ show port ++ "/upload"
     port = 8080
 
 app :: Application
@@ -52,17 +73,12 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server multipartData = liftIO $
-    forM (files multipartData) $ \file -> do
-        let wavFile = fdPayload file
-        result <- parseWavFile wavFile
-        case result of
-            Left e    -> return emptyWav
-            Right wav -> do
-                putStrLn $ "Retrieved wav file" ++ show wav
-                return wav
-
-users :: [User]
-users = [ User 1 "Isaac" "Newton"
-        , User 2 "Albert" "Einstein"
-        ]
+server multipartData = waves
+    where waves = liftIO . forM (files multipartData) $ \file -> do
+            let wavFile = fdPayload file
+            result <- parseWavFile wavFile
+            case result of
+                Left e    -> return emptyWav
+                Right wav -> do
+                    putStrLn $ "Retrieved wav file" ++ show wav
+                    return wav
