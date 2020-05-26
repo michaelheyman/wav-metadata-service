@@ -27,6 +27,7 @@ dependencies:
 - servant-multipart
 - text
 - wai
+- wai-logger
 - warp
 
 library:

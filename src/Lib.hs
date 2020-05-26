@@ -12,7 +12,9 @@ import           Control.Monad.IO.Class   (liftIO)
 import           Data.Aeson               (ToJSON (..), object, toJSON, (.=))
 import           Data.Text                (Text)
 import           Data.Text.Encoding       (decodeUtf8)
-import           Network.Wai.Handler.Warp (run)
+import           Network.Wai.Handler.Warp (defaultSettings, runSettings,
+                                           setLogger, setPort)
+import           Network.Wai.Logger       (withStdoutLogger)
 import           Servant
 import           Servant.Multipart
 import           Sound.Wav.Parser         (parseWavFile)
@@ -66,12 +68,12 @@ instance ToJSON WavResponse where
 type API = "upload" :> MultipartForm Tmp (MultipartData Tmp) :> Post '[JSON] [WavResponse]
 
 startApp :: IO ()
-startApp = do
+startApp = withStdoutLogger $ \logger -> do
+    let settings = setPort port $ setLogger logger defaultSettings
     putStrLn runningMessage
-    run port app
+    runSettings settings app
   where
     runningMessage = "Running server: " ++ "http://localhost:" ++ show port
-                     ++ "\nRunning API: " ++ "\thttp://localhost:" ++ show port ++ "/upload"
     port = 8080
 
 app :: Application
@@ -84,13 +86,10 @@ server :: Server API
 server multipartData = waves
     where waves = liftIO . forM (files multipartData) $ \file -> do
             let fileName = fdFileName file
-            putStrLn $ "Received request to parse " ++ show fileName
             let wavFile = fdPayload file
             result <- parseWavFile wavFile
             case result of
                 Left e    -> do
                     putStrLn $ "Error parsing " ++ show fileName ++ ": " ++ e
                     return $ WavResponse fileName (Left "Not a valid WAV file")
-                Right wav -> do
-                    putStrLn $ "Successfully parsed " ++ show fileName
-                    return $ WavResponse fileName (Right wav)
+                Right wav -> return $ WavResponse fileName (Right wav)

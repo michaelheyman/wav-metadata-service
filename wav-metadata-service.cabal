@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 24e852db29fc68b144bf57c238e0e0de378ec85f48f9595645d61f8c4181e4bd
+-- hash: a2ea0700f34fe3478a4d31255f21dbc5249941ed101fe5eed4da70a19e8535ca
 
 name:           wav-metadata-service
 version:        0.1.0.0
@@ -42,6 +42,7 @@ library
     , servant-server
     , text
     , wai
+    , wai-logger
     , warp
   default-language: Haskell2010
 
@@ -60,6 +61,7 @@ executable wav-metadata-service-exe
     , servant-server
     , text
     , wai
+    , wai-logger
     , warp
     , wav-metadata-service
   default-language: Haskell2010
@@ -80,6 +82,7 @@ test-suite wav-metadata-service-test
     , servant-server
     , text
     , wai
+    , wai-logger
     , warp
     , wav-metadata-service
   default-language: Haskell2010
