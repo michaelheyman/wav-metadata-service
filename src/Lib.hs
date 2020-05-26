@@ -58,6 +58,7 @@ data WavResponse = WavResponse
     { fileName :: Text
     , metadata :: Either String Wav
     }
+    deriving (Eq, Show)
 
 instance ToJSON WavResponse where
     toJSON (WavResponse fileName (Left metadata)) =
@@ -73,7 +74,8 @@ startApp = withStdoutLogger $ \logger -> do
     putStrLn runningMessage
     runSettings settings app
   where
-    runningMessage = "Running server: " ++ "http://localhost:" ++ show port
+    runningMessage = "Running server: " ++ baseUrl ++ ":" ++ show port
+    baseUrl = "http://localhost"
     port = 8080
 
 app :: Application
@@ -83,7 +85,10 @@ api :: Proxy API
 api = Proxy
 
 server :: Server API
-server multipartData = waves
+server = parseMultipart
+
+parseMultipart :: MultipartData Tmp -> Handler [WavResponse]
+parseMultipart multipartData = waves
     where waves = liftIO . forM (files multipartData) $ \file -> do
             let fileName = fdFileName file
             let wavFile = fdPayload file
