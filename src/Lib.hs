@@ -55,7 +55,16 @@ instance ToJSON Wav where
                , "data" .= dataChunk
                ]
 
-type API = "upload" :> MultipartForm Tmp (MultipartData Tmp) :> Post '[JSON] [Wav]
+data WavResponse = WavResponse
+    { fileName :: Text
+    , metadata :: Wav
+    }
+
+instance ToJSON WavResponse where
+    toJSON (WavResponse fileName metadata) =
+        object [ fileName .= metadata ]
+
+type API = "upload" :> MultipartForm Tmp (MultipartData Tmp) :> Post '[JSON] [WavResponse]
 
 startApp :: IO ()
 startApp = do
@@ -76,9 +85,13 @@ server :: Server API
 server multipartData = waves
     where waves = liftIO . forM (files multipartData) $ \file -> do
             let wavFile = fdPayload file
+            let fileName = fdFileName file
             result <- parseWavFile wavFile
             case result of
-                Left e    -> return emptyWav
+                Left e    -> return $ emptyWavResponse fileName
                 Right wav -> do
                     putStrLn $ "Retrieved wav file" ++ show wav
-                    return wav
+                    return $ WavResponse fileName wav
+
+emptyWavResponse :: Text -> WavResponse
+emptyWavResponse fileName = WavResponse fileName emptyWav

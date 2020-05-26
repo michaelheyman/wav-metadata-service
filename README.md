@@ -2,7 +2,7 @@
 
 ## Overview
 
-The goal of this service is to provide an endpoint that uses [haskell-wav](https://github.com/michaelheyman/haskell-wav) to respond to an HTTP request with the metadata of the submitted WAV file.
+This service provides an endpoint that uses [haskell-wav](https://github.com/michaelheyman/haskell-wav) to respond to the request with the metadata of the submitted WAV file.
 
 ## How to Develop
 
@@ -10,8 +10,8 @@ The goal of this service is to provide an endpoint that uses [haskell-wav](https
 
 1. Install dependencies: `stack install`
 2. Start the application: `stack run`
-3. Create a file and execute: `curl -F "data=@<FILE>" http://localhost:8080/upload`
-4. Verify that the endpoint returns `The form was submitted with 0 textual inputs and 1 files.`
+3. Submit a valid WAV file: `curl -F "data=@path/to/wav" http://localhost:8080/upload`
+4. Verify that the endpoint returns the decoded WAV metadata
 
 ### Before Committing Changes
 
