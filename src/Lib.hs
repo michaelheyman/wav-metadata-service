@@ -84,13 +84,16 @@ api = Proxy
 server :: Server API
 server multipartData = waves
     where waves = liftIO . forM (files multipartData) $ \file -> do
-            let wavFile = fdPayload file
             let fileName = fdFileName file
+            putStrLn $ "Received request to parse " ++ show fileName
+            let wavFile = fdPayload file
             result <- parseWavFile wavFile
             case result of
-                Left e    -> return $ emptyWavResponse fileName
+                Left e    -> do
+                    putStrLn $ "Error parsing " ++ show fileName ++ ": " ++ e
+                    return $ emptyWavResponse fileName
                 Right wav -> do
-                    putStrLn $ "Retrieved wav file" ++ show wav
+                    putStrLn $ "Successfully parsed " ++ show fileName
                     return $ WavResponse fileName wav
 
 emptyWavResponse :: Text -> WavResponse
