@@ -13,14 +13,12 @@ import           Data.Aeson
 import           Data.Aeson.TH
 import           Data.Text
 import           Data.Text.Encoding
-import qualified Data.Text.IO             as T
 import           Network.Wai
 import           Network.Wai.Handler.Warp
 import           Servant
 import           Servant.Multipart
 import           Sound.Wav.Parser
 import           Sound.Wav.Parser.Types
-import           Stubs
 
 instance ToJSON Riff where
     toJSON (Riff chunkID chunkSize chunkFormat) =
@@ -57,11 +55,13 @@ instance ToJSON Wav where
 
 data WavResponse = WavResponse
     { fileName :: Text
-    , metadata :: Wav
+    , metadata :: Either String Wav
     }
 
 instance ToJSON WavResponse where
-    toJSON (WavResponse fileName metadata) =
+    toJSON (WavResponse fileName (Left metadata)) =
+        object [ fileName .= metadata ]
+    toJSON (WavResponse fileName (Right metadata)) =
         object [ fileName .= metadata ]
 
 type API = "upload" :> MultipartForm Tmp (MultipartData Tmp) :> Post '[JSON] [WavResponse]
@@ -91,10 +91,7 @@ server multipartData = waves
             case result of
                 Left e    -> do
                     putStrLn $ "Error parsing " ++ show fileName ++ ": " ++ e
-                    return $ emptyWavResponse fileName
+                    return $ WavResponse fileName (Left "Not a valid WAV file")
                 Right wav -> do
                     putStrLn $ "Successfully parsed " ++ show fileName
-                    return $ WavResponse fileName wav
-
-emptyWavResponse :: Text -> WavResponse
-emptyWavResponse fileName = WavResponse fileName emptyWav
+                    return $ WavResponse fileName (Right wav)
