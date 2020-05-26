@@ -7,18 +7,17 @@ module Lib
     , app
     ) where
 
-import           Control.Monad
-import           Control.Monad.IO.Class
-import           Data.Aeson
-import           Data.Aeson.TH
-import           Data.Text
-import           Data.Text.Encoding
-import           Network.Wai
-import           Network.Wai.Handler.Warp
+import           Control.Monad            (forM)
+import           Control.Monad.IO.Class   (liftIO)
+import           Data.Aeson               (ToJSON (..), object, toJSON, (.=))
+import           Data.Text                (Text)
+import           Data.Text.Encoding       (decodeUtf8)
+import           Network.Wai.Handler.Warp (run)
 import           Servant
 import           Servant.Multipart
-import           Sound.Wav.Parser
-import           Sound.Wav.Parser.Types
+import           Sound.Wav.Parser         (parseWavFile)
+import           Sound.Wav.Parser.Types   (Data (..), Format (..), Riff (..),
+                                           Wav (..))
 
 instance ToJSON Riff where
     toJSON (Riff chunkID chunkSize chunkFormat) =
