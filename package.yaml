@@ -25,6 +25,7 @@ dependencies:
 - haskell-wav
 - servant-server
 - servant-multipart
+- text
 - wai
 - warp
 
