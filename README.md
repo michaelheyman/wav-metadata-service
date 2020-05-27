@@ -18,6 +18,8 @@ This service provides an endpoint that uses [haskell-wav](https://github.com/mic
 1. Ensure that `pre-commit` and its configuration are installed
     * Install `pre-commit`: `brew install pre-commit` or `pip install pre-commit`
     * Install the commit hooks: `pre-commit install`
+    * Install `hlint`: `stack install hlint`
+    * Install `stylish-haskell`: `stack install stylish-haskell`
 1. Run `hpack` if changes are made to `package.yaml` or new modules are added.
 
 ### Continuous Compilation with GHCID
