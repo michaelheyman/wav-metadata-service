@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a2ea0700f34fe3478a4d31255f21dbc5249941ed101fe5eed4da70a19e8535ca
+-- hash: b9600e2bf157441720aed1c7a7362b09af00a6513e40baa64a81c64ceb807770
 
 name:           wav-metadata-service
 version:        0.1.0.0
@@ -29,7 +29,8 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Server
+      Types
   other-modules:
       Paths_wav_metadata_service
   hs-source-dirs:
